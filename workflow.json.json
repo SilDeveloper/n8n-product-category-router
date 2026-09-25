@@ -1,0 +1,483 @@
+{
+  "name": "Processamento de Formulário por Categoria",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Contact",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Nome",
+              "placeholder": "Digite o nome do produto"
+            },
+            {
+              "fieldLabel": "Preço",
+              "fieldType": "number",
+              "placeholder": "Digite um valor"
+            },
+            {
+              "fieldLabel": "Categoria",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Eletronicos"
+                  },
+                  {
+                    "option": "Roupas"
+                  },
+                  {
+                    "option": "Comida"
+                  },
+                  {
+                    "option": "Outros"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.6,
+      "position": [
+        -64,
+        112
+      ],
+      "id": "7372ccee-cca4-4dd3-8071-ba91a92a5ecc",
+      "name": "On form submission",
+      "webhookId": "519d62f0-3517-48d2-9bd4-c7a450c12bf0"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        336,
+        -192
+      ],
+      "id": "ec8ec9d2-5b6e-4a04-9dfc-8380733a92f6",
+      "name": "Convert to File"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "=/data/aprovado_{{ $now }}.txt",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1.1,
+      "position": [
+        560,
+        -192
+      ],
+      "id": "062f0e86-cb44-4407-a351-df3f20c2c5b4",
+      "name": "Read/Write Files from Disk"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "e7c3be65-865d-4b5d-a987-1ee4bb462f39",
+              "leftValue": "={{ $json['Preço'] }}",
+              "rightValue": 300,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        160,
+        112
+      ],
+      "id": "d4c3dddc-3317-4913-9c81-e37af3407506",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('On form submission').item.json.Categoria }}",
+                    "rightValue": "Eletronicos",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "9f0b721d-7960-438e-8e65-df6698328afd"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "f4a7e2d5-01f1-4923-9b71-d1376297bbf7",
+                    "leftValue": "={{ $('On form submission').item.json.Categoria }}",
+                    "rightValue": "Roupas",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "7da7adf5-dcd3-4aa8-896f-7702d3efdab0",
+                    "leftValue": "={{ $('On form submission').item.json.Categoria }}",
+                    "rightValue": "Comida",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "5704dd38-03b5-4ee0-aeb9-6362c77ed433",
+                    "leftValue": "={{ $('On form submission').item.json.Categoria }}",
+                    "rightValue": "Outros",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        464,
+        96
+      ],
+      "id": "c9c38d93-d8fa-4906-9c58-1186b62697b0",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "=/data/Eletronicos_{{ $now }}.txt",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1.1,
+      "position": [
+        1040,
+        -32
+      ],
+      "id": "ece3c876-02a4-4e12-9d8d-81b54c874f61",
+      "name": "Read/Write Files from Disk1"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "=/data/Roupas_{{ $now }}.txt",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1.1,
+      "position": [
+        1040,
+        160
+      ],
+      "id": "29657bfa-8764-489f-b6c7-3d496bac887c",
+      "name": "Read/Write Files from Disk2"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "=/data/Comida_{{ $now }}.txt",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1.1,
+      "position": [
+        1040,
+        352
+      ],
+      "id": "feaefc3e-961d-491a-b4f9-0c98fd6f7d50",
+      "name": "Read/Write Files from Disk3"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "=/data/Outros_{{ $now }}.txt",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1.1,
+      "position": [
+        1040,
+        544
+      ],
+      "id": "524f7c22-4bdb-4503-8f08-1b240a0a2ba6",
+      "name": "Read/Write Files from Disk4"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        816,
+        -32
+      ],
+      "id": "348f7035-6d31-4d2c-87d1-b40b6a99abf0",
+      "name": "Eletronicos"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        816,
+        160
+      ],
+      "id": "922114f2-9d4e-4119-9e5d-4596a6058c65",
+      "name": "Roupas"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        816,
+        352
+      ],
+      "id": "c2efc2b2-7c17-47e2-afbf-88afadb30a89",
+      "name": "Comida"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        816,
+        544
+      ],
+      "id": "cd1df53c-405b-4f1f-8cb2-a2b11db97417",
+      "name": "Outros"
+    },
+    {
+      "parameters": {
+        "content": "## Onde ficam salvos os arquivos?\n**C:\\Users\\<nome_de_usuario>\\n8n-data**",
+        "height": 80,
+        "width": 384,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        784,
+        -176
+      ],
+      "typeVersion": 1,
+      "id": "2befc77f-e40e-45e6-868f-faf6790eb303",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "Read/Write Files from Disk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read/Write Files from Disk": {
+      "main": [
+        []
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Eletronicos",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Roupas",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Comida",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Outros",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Eletronicos": {
+      "main": [
+        [
+          {
+            "node": "Read/Write Files from Disk1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Roupas": {
+      "main": [
+        [
+          {
+            "node": "Read/Write Files from Disk2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Comida": {
+      "main": [
+        [
+          {
+            "node": "Read/Write Files from Disk3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Outros": {
+      "main": [
+        [
+          {
+            "node": "Read/Write Files from Disk4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "36d6e679-c410-4b98-a5b0-457fd217dfef",
+  "meta": {
+    "instanceId": "bddcd372c41d95243090e52236d3dececd9dfeaf32920ceb79dac33f404deedb"
+  },
+  "nodeGroups": [],
+  "id": "zbfbwWiqnFp9ot7J",
+  "tags": []
+}
